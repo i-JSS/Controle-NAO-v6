@@ -1,5 +1,3 @@
-
-# -*- coding: utf-8 -*-
 import cv2
 import numpy as np
 from naoqi import ALProxy
@@ -8,9 +6,9 @@ NAO_IP = "192.168.1.116"
 PORT = 9559
 
 camera = 1             
-resolution = 0          
-colorSpace = 13           
-fps = 30                  
+resolution = 0        
+colorSpace = 11        
+fps = 30
 clientName = "python_client"
 
 try:
@@ -23,21 +21,24 @@ try:
     print("Pressione 'Q' para sair...")
     while True:
         naoImage = videoProxy.getImageRemote(client)
-        if not naoImaglo IP do seu NAOe:
+        if not naoImage:
             break
 
-        imageArralo IP do seu NAOlo IP do seu NAOy = np.frombuffer(naoImage[6], dtype=np.uint8).reshape((120, 160, 3))
-        
-        tela_cheia = cv2.resize(imageArray, (1920, 1080), interpolation=cv2.INTER_NEAREST)
-        
-        cv2.imsholo IP do seu NAOw("NAO Camera - FULLSCREEN", tela_cheia)
-        
+        width = naoImage[0]
+        height = naoImage[1]
+        imageArray = np.frombuffer(naoImage[6], dtype=np.uint8).reshape((height, width, 3))
+
+        tela_cheia = cv2.resize(imageArray, (1920, 1080), interpolation=cv2.INTER_LINEAR)
+    
+        cv2.imshow("NAO Camera - FULLSCREEN", tela_cheia)
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+except Exception as e:
+    print("Erro:", e)
 finally:
-    videoProxy.unsubscribe(client)
+    if 'videoProxy' in locals() and 'client' in locals():
+        videoProxy.unsubscribe(client)
     cv2.destroyAllWindows()
     print("Streaming encerrado.")
-
-
